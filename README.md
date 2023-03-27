@@ -1,12 +1,14 @@
-# This script lists all containers from the "exegol" images present on the machine and allows the user to choose one to enter into exec mode with the /bin/zsh shell.
+# ExegolLuncherWT
 
-# Get the name of the exegol image
+This script lists all containers from the "exegol" images present on the machine and allows the user to choose one to enter into exec mode with the /bin/zsh shell.
+
+## Get the name of the exegol image
 $imageName = Read-Host "Enter the name of the exegol image (example: nwodtuhs/exegol)"
 
-# List all containers from the exegol image on the machine
+## List all containers from the exegol image on the machine
 $containers = docker ps --filter ancestor=$imageName --format "{{.Names}}"
 
-# If only one container is available, choose it automatically
+## If only one container is available, choose it automatically
 if ($containers.Count -eq 1) {
   $container = $containers[0]
 } else {
@@ -19,5 +21,5 @@ if ($containers.Count -eq 1) {
   $container = $containers[$containerIndex]
 }
 
-# Execute the container in exec mode with the /bin/zsh shell
+## Execute the container in exec mode with the /bin/zsh shell
 docker exec -it $container /bin/zsh
