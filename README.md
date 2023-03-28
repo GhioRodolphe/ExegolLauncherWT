@@ -1,4 +1,4 @@
-# ExegolLuncherWT
+# ExegolLauncherWT
 
 This script lists all containers from the "exegol" images present on the machine and allows the user to choose one to enter into exec mode with the /bin/zsh shell.
 
