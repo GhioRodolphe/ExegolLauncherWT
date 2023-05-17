@@ -55,6 +55,7 @@ Function Choose-Container {
             $containerImage = $containerArray[1]
             $containerNames = $containerArray[2]
             Write-Host "${index} : $containerImage`t$containerNames" -ForegroundColor Yellow
+            $index++
         }
 
         # Ask the user to choose a container
@@ -66,7 +67,7 @@ Function Choose-Container {
         else {
             $choice = [int]$choice
 
-            if ($choice -gt $index) {
+            if ($choice -ge $index) {
                 Write-Host "This container does not exist" -ForegroundColor Red
                 Choose-Container -containers $containers
             }
