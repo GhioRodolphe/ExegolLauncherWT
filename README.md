@@ -1,25 +1,35 @@
-# ExegolLauncherWT
+# Context
+This PowerShell script is designed to be used with Windows Terminal for managing Docker containers that use the "[exegol](https://github.com/ThePorgs/Exegol)" image. It allows users to start these containers if necessary, enter the exec mode, and interact with them directly from the Windows Terminal. It serves as a convenience tool for individuals who frequently use these specific Docker containers.
 
-This script lists all containers from the "exegol" images present on the machine and allows the user to choose one to enter into exec mode with the /bin/zsh shell.
+# Operation
+The script defines and uses three main functions:
 
-## Get the name of the exegol image
-$imageName = Read-Host "Enter the name of the exegol image (example: nwodtuhs/exegol)"
+Get-MatchingContainers: This function retrieves a list of all Docker containers whose image matches a given prefix.
 
-## List all containers from the exegol image on the machine
-$containers = docker ps --filter ancestor=$imageName --format "{{.Names}}"
+Start-Container: This function starts a Docker container using its ID.
 
-## If only one container is available, choose it automatically
-if ($containers.Count -eq 1) {
-  $container = $containers[0]
-} else {
-  # Ask the user to choose a container
-  Write-Host "Choose a container:"
-  for ($i = 0; $i -lt $containers.Count; $i++) {
-    Write-Host "$i: $($containers[$i])"
-  }
-  $containerIndex = Read-Host "Enter the index of the container"
-  $container = $containers[$containerIndex]
-}
+Exec-Container: This function enables exec mode for a Docker container using its ID, allowing the user to interact with the container.
 
-## Execute the container in exec mode with the /bin/zsh shell
-docker exec -it $container /bin/zsh
+When the script is run, it checks for Docker containers that match the "exegol" image prefix. If it finds only one matching container, the script will automatically start it (if it's not already running) and enable exec mode. If multiple matching containers are found, the script will prompt the user to select one. The selected container is then started (if necessary) and exec mode is enabled.
+
+# Installation
+To install and use this script with Windows Terminal, follow these steps:
+
+* Navigate to Settings > Command line in Windows Terminal.
+
+* Add this line, replacing <path_to_the_script> with the actual path to the script:
+
+```powershell 
+powershell.exe -noprofile -noexit  <path_to_the_script>\script.ps1
+```
+
+# Contribution
+Contributions to improve this script are very welcome. Users are encouraged to open issues with their suggestions, questions or bug reports. If you wish to make a more substantial contribution, please feel free to propose a pull request (PR).
+
+Please ensure that your code follows the existing style to keep the project as consistent as possible.
+
+Thank you for your interest in improving this Docker container management script.
+
+# Exegol ressources
+* Github: https://github.com/ThePorgs/Exegol
+* Documentation: https://exegol.readthedocs.io/en/latest/
