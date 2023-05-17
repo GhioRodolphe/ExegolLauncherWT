@@ -33,45 +33,59 @@ Function Exec-Container {
     docker exec -it $containerId /bin/zsh
 }
 
+Function Exegol-Start {
+    Write-Host "Running 'exegol start' in interactive mode" -ForegroundColor Green
+    exegol start
+}
+
+Function Choose-Container {
+    param ($containers)
+
+    # If no containers are available, display an error message
+    if ($null -eq $matchingContainers) {
+        Write-Host "No containers with image prefix '$imagePrefix' found." -ForegroundColor Red
+        Exegol-Start
+    }
+    else {
+        # Display the list and allow the user to choose a container
+        Write-Host "List of available containers:"
+        $index = 0
+        foreach ($container in $containers) {
+            $containerArray = $container -split "\t"
+            $containerImage = $containerArray[1]
+            $containerNames = $containerArray[2]
+            Write-Host "${index} : $containerImage`t$containerNames" -ForegroundColor Yellow
+        }
+
+        # Ask the user to choose a container
+        $choice = Read-Host "Choose a container index or press enter to run 'exegol start' in interactive mode "
+
+        if ($choice -eq '') {
+            Exegol-Start
+        }
+        else {
+            $choice = [int]$choice
+
+            if ($choice -gt $index) {
+                Write-Host "This container does not exist" -ForegroundColor Red
+                Choose-Container -containers $containers
+            }
+            else {
+                # Start the container if necessary and enter exec mode for the chosen container
+                $containerIdArray = $matchingContainers[$choice] -split "\t"
+                if ($containerIdArray[3].Contains("Exited")) {
+                    Start-Container -containerId $containerIdArray[0]
+                }
+                Exec-Container -containerId $containerIdArray[0]
+            }
+        }
+    }
+}
+
 # Get the prefix of the image
 $imagePrefix = "nwodtuhs/exegol"
 
 # Get the matching containers
-$matchingContainers = Get-MatchingContainers -imagePrefix $imagePrefix
+[array]$matchingContainers = Get-MatchingContainers -imagePrefix $imagePrefix
 
-# If no containers are available, display an error message
-if ($null -eq $matchingContainers) {
-    Write-Host "No containers with image prefix '$imagePrefix' found." -ForegroundColor Red
-    return
-}
-
-# If only one container is available, enter exec mode directly
-if ($matchingContainers.Count -eq 1) {
-    $matchingContainers = $matchingContainers -split "\t"
-
-    if ($matchingContainers[3].Contains("Exited")) {
-        Start-Container -containerId $matchingContainers[0]
-    }
-    Exec-Container -containerId $matchingContainers[0]
-    return
-}
-
-# If multiple containers are available, display the list and allow the user to choose a container
-Write-Host "List of available containers:"
-for ($i = 0; $i -lt $matchingContainers.Count; $i++) {
-    $containerArray = $matchingContainers[$i] -split "\t"
-    $containerId = $containerArray[0]
-    $containerImage = $containerArray[1]
-    $containerNames = $containerArray[2]
-    Write-Host "${i} : $containerImage`t$containerNames" -ForegroundColor Yellow
-}
-
-# Ask the user to choose a container
-$choice = Read-Host "Choose a container (number) "
-
-# Start the container if necessary and enter exec mode for the chosen container
-$containerIdArray = $matchingContainers[$choice] -split "\t"
-if ($containerIdArray[3].Contains("Exited")) {
-    Start-Container -containerId $containerIdArray[0]
-}
-Exec-Container -containerId $containerIdArray[0]
+Choose-Container -containers $matchingContainers

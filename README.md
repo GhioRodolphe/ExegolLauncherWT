@@ -20,7 +20,7 @@ To install and use this script with Windows Terminal, follow these steps:
 * Add this line, replacing <path_to_the_script> with the actual path to the script:
 
 ```powershell 
-powershell.exe -noprofile -noexit  <path_to_the_script>\script.ps1
+powershell.exe <path_to_the_script>\script.ps1
 ```
 
 # Contribution
