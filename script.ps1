@@ -54,12 +54,17 @@ if ($matchingContainers.Count -eq 0) {
     $matchingContainers | Format-Table -AutoSize -Property Index, ID, Image, Names, Status
 
     # Ask the user to choose a container
-    $choice = Read-Host "Choose a container ID or press enter to run 'exegol start' in interactive mode "
-
-    if ($choice -eq '') {
-        Invoke-ExegolStart
-    } else {
+    do {
+        $choice = Read-Host "Choose a container index or press enter to run 'exegol start' in interactive mode "
+        if ($choice -eq '') {
+            Invoke-ExegolStart
+            return
+        }
         $chosenContainer = $matchingContainers | Where-Object { $_.Index -eq $choice }
-        Invoke-ContainerManagement -containerId $chosenContainer.ID -status $chosenContainer.Status
-    }
+        if ($null -eq $chosenContainer) {
+            Write-Host "Invalid choice. Please enter a valid index." -ForegroundColor Red
+        }
+    } while ($null -eq $chosenContainer)
+
+    Invoke-ContainerManagement -containerId $chosenContainer.ID -status $chosenContainer.Status
 }
