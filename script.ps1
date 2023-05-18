@@ -14,7 +14,7 @@ Function Get-Container {
                 Index  = $index
                 ID     = $containerData[0]
                 Image  = $containerData[1]
-                Names  = $containerData[2]
+                Name  = $containerData[2]
                 Status = $containerData[3]
             }
             $index ++
