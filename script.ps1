@@ -51,7 +51,7 @@ if ($matchingContainers.Count -eq 0) {
     Invoke-ExegolStart
 } else {
     Write-Host "List of available containers:" -ForegroundColor Yellow
-    $matchingContainers | Format-Table -AutoSize -Property Index, ID, Image, Names, Status
+    $matchingContainers | Format-Table -AutoSize -Property Index, ID, Image, Name, Status
 
     # Ask the user to choose a container
     do {
